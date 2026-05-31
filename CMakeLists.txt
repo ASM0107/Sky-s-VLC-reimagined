@@ -60,7 +60,12 @@ target_link_libraries(SkyVLCReimagined PRIVATE
     Qt6::Concurrent
 )
 
-file(COPY ${CMAKE_SOURCE_DIR}/styles DESTINATION ${CMAKE_BINARY_DIR})
-file(COPY ${CMAKE_SOURCE_DIR}/playlists DESTINATION ${CMAKE_BINARY_DIR})
+if(EXISTS "${CMAKE_SOURCE_DIR}/styles")
+    file(COPY ${CMAKE_SOURCE_DIR}/styles DESTINATION ${CMAKE_BINARY_DIR})
+endif()
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/playlists")
+    file(COPY ${CMAKE_SOURCE_DIR}/playlists DESTINATION ${CMAKE_BINARY_DIR})
+endif()
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/assets)
 file(COPY ${CMAKE_SOURCE_DIR}/assets/ DESTINATION ${CMAKE_BINARY_DIR}/assets)
