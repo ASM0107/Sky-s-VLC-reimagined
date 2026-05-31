@@ -1,0 +1,60 @@
+name: Windows Release Build
+
+on:
+  push:
+    tags:
+      - 'v*' # Triggers whenever you push a tag like "v1.0"
+
+jobs:
+  build:
+    name: Build & Package Windows App
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup MSYS2 and Qt6
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: UCRT64
+        update: true
+        install: >-
+          mingw-w64-ucrt-x86_64-gcc
+          mingw-w64-ucrt-x86_64-cmake
+          mingw-w64-ucrt-x86_64-ninja
+          mingw-w64-ucrt-x86_64-qt6-base
+          mingw-w64-ucrt-x86_64-qt6-multimedia
+
+    - name: Build Project & Gather DLLs
+      shell: msys2 {0}
+      run: |
+        # 1. Build the project in Release mode
+        mkdir build_release
+        cd build_release
+        cmake -G Ninja -DCMAKE_BUILD_TYPE=Release ..
+        cmake --build .
+        
+        # 2. Create the deployment folder
+        mkdir SkyVLCReimagined_Release
+        cp SkyVLCReimagined.exe SkyVLCReimagined_Release/
+        
+        # Copy external resources
+        cp -r ../styles SkyVLCReimagined_Release/ || true
+        cp -r ../playlists SkyVLCReimagined_Release/ || true
+        
+        # 3. Automatically pull all required Qt DLLs into the folder
+        windeployqt SkyVLCReimagined_Release/SkyVLCReimagined.exe
+
+    - name: Zip the Folder
+      shell: pwsh
+      run: |
+        Compress-Archive -Path build_release/SkyVLCReimagined_Release -DestinationPath SkyVLCReimagined_Windows.zip -Force
+
+    - name: Publish to GitHub Releases
+      uses: softprops/action-gh-release@v2
+      with:
+        files: SkyVLCReimagined_Windows.zip
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
