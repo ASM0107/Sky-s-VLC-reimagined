@@ -1,0 +1,41 @@
+# CMake
+build/
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.ninja
+.ninja_*
+*_autogen/
+CMakeLists.txt.user
+
+# Qt
+*.pro.user
+*.qm
+*.moc
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+*.qmlc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.user
+
+# Executables & Binaries
+*.exe
+*.dll
+*.so
+*.a
+*.lib
+*.dylib
+*.pdb
